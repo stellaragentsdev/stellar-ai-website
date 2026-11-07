@@ -11,9 +11,14 @@ export const CURRENCIES = {
 const CurrencyContext = createContext();
 
 export const CurrencyProvider = ({ children }) => {
-    const [currency, setCurrencyState] = useState(() => {
-        return localStorage.getItem('stellar_currency') || 'USD';
-    });
+    // Start with USD so prerendered HTML and the first client render match,
+    // then apply the visitor's saved currency after hydration.
+    const [currency, setCurrencyState] = useState('USD');
+
+    useEffect(() => {
+        const saved = localStorage.getItem('stellar_currency');
+        if (saved && CURRENCIES[saved]) setCurrencyState(saved);
+    }, []);
 
     const setCurrency = (code) => {
         if (CURRENCIES[code]) {

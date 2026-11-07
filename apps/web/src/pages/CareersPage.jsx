@@ -199,6 +199,7 @@ const CareersPage = () => {
                 title="Careers & Paid Certifications — Stellar AI"
                 description="Explore startup roles, paid developer internships, and paid project certification cohorts in agentic AI."
                 siteName="Stellar AI Careers"
+                path="/careers"
             />
 
             {/* Glowing Navbar */}

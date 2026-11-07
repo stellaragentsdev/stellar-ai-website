@@ -424,6 +424,7 @@ const HomePage = () => {
                 description="LLM-powered AI agents and copilots with guardrails and human review."
                 image={HERO_IMG}
                 siteName="Stellar AI"
+                path="/"
             />
 
             {/* Glowing Reordered Navbar */}

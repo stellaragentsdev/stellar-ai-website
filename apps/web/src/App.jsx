@@ -6,18 +6,25 @@ import HomePage from './pages/HomePage';
 import CareersPage from './pages/CareersPage';
 import { CurrencyProvider } from './contexts/CurrencyContext';
 
-function App() {
+// Shared by the browser entry (BrowserRouter) and the build-time prerender (StaticRouter).
+export function AppRoutes() {
     return (
         <CurrencyProvider>
-            <Router>
-                <ScrollToTop />
-                <FadeInSections />
-                <Routes>
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/careers" element={<CareersPage />} />
-                </Routes>
-            </Router>
+            <ScrollToTop />
+            <FadeInSections />
+            <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/careers" element={<CareersPage />} />
+            </Routes>
         </CurrencyProvider>
+    );
+}
+
+function App() {
+    return (
+        <Router>
+            <AppRoutes />
+        </Router>
     );
 }
 

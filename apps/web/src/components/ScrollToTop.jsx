@@ -1,10 +1,13 @@
 import { useLocation } from 'react-router-dom';
-import { useLayoutEffect } from 'react';
+import { useEffect, useLayoutEffect } from 'react';
+
+// useLayoutEffect warns during build-time prerender; it is a no-op there anyway.
+const useIsomorphicLayoutEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect;
 
 const ScrollToTop = () => {
     const { pathname, hash } = useLocation();
 
-    useLayoutEffect(() => {
+    useIsomorphicLayoutEffect(() => {
         if (hash) {
             const target = document.getElementById(hash.slice(1));
 
