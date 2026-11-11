@@ -1,28 +1,40 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
+import { BRAND, SITE_URL, canonicalFor, getPage, jsonLdFor } from '@/seo/site';
 
-// Social + canonical tags only. The page's own <Helmet> must keep a literal
-// <title> and <meta name="description">, because the llms.txt build step reads
-// those two tags straight out of the page file's source.
-const Seo = ({ title, description, image, url, siteName, type = 'website' }) => {
-    const canonical = url || window.location.origin + window.location.pathname;
+// All head tags for a page come from src/seo/site.js, so the prerendered HTML,
+// the sitemap and llms.txt always agree. Canonicals are hard-coded to
+// https://stellaragents.in and never derived from the requested host.
+const Seo = ({ path, page: pageOverride }) => {
+    const page = pageOverride || getPage(path);
+    if (!page) return null;
+    const canonical = canonicalFor(page.path);
+    const image = `${SITE_URL}${page.ogImage}`;
 
     return (
-        <Helmet>
-            <link rel="canonical" href={canonical} />
-            <meta property="og:url" content={canonical} />
-            <meta property="og:type" content={type} />
-            {siteName && <meta property="og:site_name" content={siteName} />}
-            {title && <meta property="og:title" content={title} />}
-            {description && <meta property="og:description" content={description} />}
-            {image && <meta property="og:image" content={image} />}
-            <meta name="twitter:card" content={image ? 'summary_large_image' : 'summary'} />
-            {title && <meta name="twitter:title" content={title} />}
-            {description && <meta name="twitter:description" content={description} />}
-            {image && <meta name="twitter:image" content={image} />}
+        <Helmet htmlAttributes={{ lang: 'en' }}>
+            <title>{page.title}</title>
+            <meta name="description" content={page.description} />
+            {page.noindex ? <meta name="robots" content="noindex, follow" /> : <link rel="canonical" href={canonical} />}
+            <meta property="og:type" content="website" />
+            <meta property="og:site_name" content={BRAND} />
+            <meta property="og:locale" content="en_IN" />
+            <meta property="og:title" content={page.title} />
+            <meta property="og:description" content={page.description} />
+            {!page.noindex && <meta property="og:url" content={canonical} />}
+            <meta property="og:image" content={image} />
+            <meta property="og:image:type" content="image/jpeg" />
+            <meta property="og:image:width" content="1200" />
+            <meta property="og:image:height" content="630" />
+            <meta property="og:image:alt" content={`${BRAND}: ${page.ogHeading || page.title}`} />
+            <meta name="twitter:card" content="summary_large_image" />
+            <meta name="twitter:title" content={page.title} />
+            <meta name="twitter:description" content={page.description} />
+            <meta name="twitter:image" content={image} />
+            {!page.noindex && <script type="application/ld+json">{JSON.stringify(jsonLdFor(page))}</script>}
         </Helmet>
     );
-}
+};
 
 export default Seo;
 

@@ -1,191 +1,35 @@
 #!/usr/bin/env node
-
+// Writes public/llms.txt from the page list in src/seo/site.js.
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
+import { PAGES, SITE_URL, BRAND, LEGAL_NAME, EMAIL, ADDRESS, canonicalFor } from '../src/seo/site.js';
 
-const CLEAN_CONTENT_REGEX = {
-	comments: /\/\*[\s\S]*?\*\/|\/\/.*$/gm,
-	templateLiterals: /`[\s\S]*?`/g,
-	strings: /'[^']*'|"[^"]*"/g,
-	jsxExpressions: /\{.*?\}/g,
-	htmlEntities: {
-		quot: /&quot;/g,
-		amp: /&amp;/g,
-		lt: /&lt;/g,
-		gt: /&gt;/g,
-		apos: /&apos;/g
-	}
-};
+const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 
-const EXTRACTION_REGEX = {
-	// `element={<Page />}` puts a `>` inside the tag, so the attribute scan has
-	// to step over brace groups instead of stopping at the first `>`.
-	route: /<Route\s+(?:[^>{]|\{[^}]*\})*\/?>/g,
-	path: /path=["']([^"']+)["']/,
-	element: /element=\{([\s\S]*)\}/,
-	elementComponent: /<(\w+)/g,
-	helmet: /<Helmet[^>]*?>([\s\S]*?)<\/Helmet>/i,
-	helmetTest: /<Helmet[\s\S]*?<\/Helmet>/i,
-	title: /<title[^>]*?>\s*(.*?)\s*<\/title>/i,
-	description: /<meta\s+name=["']description["']\s+content=["'](.*?)["']/i
-};
+const section = (title, pages) => [`## ${title}`, ...pages.map((p) => `- [${p.title}](${canonicalFor(p.path)}): ${p.llmsSummary}`)].join('\n');
 
-function cleanContent(content) {
-	return content
-		.replace(CLEAN_CONTENT_REGEX.comments, '')
-		.replace(CLEAN_CONTENT_REGEX.templateLiterals, '""')
-		.replace(CLEAN_CONTENT_REGEX.strings, '""');
-}
+const byPath = (paths) => paths.map((p) => PAGES.find((x) => x.path === p)).filter(Boolean);
 
-function cleanText(text) {
-	if (!text) return text;
+const content = `# ${BRAND}
 
-	return text
-		.replace(CLEAN_CONTENT_REGEX.jsxExpressions, '')
-		.replace(CLEAN_CONTENT_REGEX.htmlEntities.quot, '"')
-		.replace(CLEAN_CONTENT_REGEX.htmlEntities.amp, '&')
-		.replace(CLEAN_CONTENT_REGEX.htmlEntities.lt, '<')
-		.replace(CLEAN_CONTENT_REGEX.htmlEntities.gt, '>')
-		.replace(CLEAN_CONTENT_REGEX.htmlEntities.apos, "'")
-		.trim();
-}
+> ${BRAND} builds custom, human-in-the-loop AI agents and copilots for businesses. Agents take on repetitive, rule-based work inside the tools a team already uses, and a person approves anything important. Based in Chennai, India; works with teams in India and abroad.
 
-function extractRoutes(appJsxPath) {
-	if (!fs.existsSync(appJsxPath)) return new Map();
+## Key facts
+- Brand: ${BRAND} (website: ${SITE_URL}/)
+- Legal entity: ${LEGAL_NAME}
+- Registered office: ${ADDRESS.full}
+- Contact: ${EMAIL}
+- What we build: task agents for operations, assistants grounded in a client's own documents (RAG), multi-agent workflows, healthcare revenue cycle (RCM) support agents, code review and security agents, and private deployments of open-source models.
+- How we work: free discovery call, scoping of one workflow, small pilot, review with the client's team, go live with logging and human approval steps, handover.
+- Figures on the site (ROI calculator, industry impact numbers, demo outputs) are illustrative, not client results.
 
-	try {
-		const content = fs.readFileSync(appJsxPath, 'utf8');
-		const routes = new Map();
-		const routeMatches = [...content.matchAll(EXTRACTION_REGEX.route)];
+${section('Main pages', byPath(['/', '/agentic-ai', '/ai-agent-development-company-india', '/agentic-ai-chennai', '/ai-agents-healthcare-rcm']))}
 
-		for (const match of routeMatches) {
-			const routeTag = match[0];
-			const pathMatch = routeTag.match(EXTRACTION_REGEX.path);
-			const elementMatch = routeTag.match(EXTRACTION_REGEX.element);
-			const isIndex = routeTag.includes('index');
+${section('Careers', byPath(['/careers']))}
 
-			if (elementMatch) {
-				// A guarded route reads `element={<ProtectedRoute><SettingsPage /></ProtectedRoute>}`,
-				// so the page is the innermost component rather than the first one.
-				const componentNames = [...elementMatch[1].matchAll(EXTRACTION_REGEX.elementComponent)];
-				const componentName = componentNames.at(-1)?.[1];
+${section('Optional', byPath(['/privacy', '/terms']))}
+`;
 
-				if (!componentName) continue;
-
-				let routePath;
-
-				if (isIndex) {
-					routePath = '/';
-				} else if (pathMatch) {
-					routePath = pathMatch[1].startsWith('/') ? pathMatch[1] : `/${pathMatch[1]}`;
-				}
-
-				routes.set(componentName, routePath);
-			}
-		}
-
-		return routes;
-	} catch (error) {
-		return new Map();
-	}
-}
-
-function findReactFiles(dir) {
-	return fs.readdirSync(dir).map(item => path.join(dir, item));
-}
-
-function extractHelmetData(content, filePath, routes) {
-	const cleanedContent = cleanContent(content);
-
-	if (!EXTRACTION_REGEX.helmetTest.test(cleanedContent)) {
-		return null;
-	}
-
-	const helmetMatch = content.match(EXTRACTION_REGEX.helmet);
-	if (!helmetMatch) return null;
-
-	const helmetContent = helmetMatch[1];
-	const titleMatch = helmetContent.match(EXTRACTION_REGEX.title);
-	const descMatch = helmetContent.match(EXTRACTION_REGEX.description);
-
-	const title = cleanText(titleMatch?.[1]);
-	const description = cleanText(descMatch?.[1]);
-
-	const fileName = path.basename(filePath, path.extname(filePath));
-	const url = routes.size && routes.has(fileName)
-		? routes.get(fileName)
-		: generateFallbackUrl(fileName);
-
-	return {
-		url,
-		title: title || 'Untitled Page',
-		description: description || 'No description available'
-	};
-}
-
-function generateFallbackUrl(fileName) {
-	const cleanName = fileName.replace(/Page$/, '').toLowerCase();
-	return cleanName === 'app' ? '/' : `/${cleanName}`;
-}
-
-function generateLlmsTxt(pages) {
-	const sortedPages = pages.sort((a, b) => a.title.localeCompare(b.title));
-	const pageEntries = sortedPages.map(page =>
-		`- [${page.title}](${page.url}): ${page.description}`
-	).join('\n');
-
-	return `## Pages\n${pageEntries}`;
-}
-
-function ensureDirectoryExists(dirPath) {
-	if (!fs.existsSync(dirPath)) {
-		fs.mkdirSync(dirPath, { recursive: true });
-	}
-}
-
-function processPageFile(filePath, routes) {
-	try {
-		const content = fs.readFileSync(filePath, 'utf8');
-		return extractHelmetData(content, filePath, routes);
-	} catch (error) {
-		console.error(`❌ Error processing ${filePath}:`, error.message);
-		return null;
-	}
-}
-
-function main() {
-	const pagesDir = path.join(process.cwd(), 'src', 'pages');
-	const appJsxPath = path.join(process.cwd(), 'src', 'App.jsx');
-
-	let pages = [];
-
-	if (!fs.existsSync(pagesDir)) {
-		pages.push(processPageFile(appJsxPath, new Map()))
-		pages = pages.filter(Boolean);
-	} else {
-		const routes = extractRoutes(appJsxPath);
-		const reactFiles = findReactFiles(pagesDir);
-
-		pages = reactFiles
-			.map(filePath => processPageFile(filePath, routes))
-			.filter(Boolean);
-	}
-
-	if (pages.length === 0) {
-		console.error('❌ No pages with Helmet components found!');
-		process.exit(1);
-	}
-
-
-	const llmsTxtContent = generateLlmsTxt(pages);
-	const outputPath = path.join(process.cwd(), 'public', 'llms.txt');
-
-	ensureDirectoryExists(path.dirname(outputPath));
-	fs.writeFileSync(outputPath, llmsTxtContent, 'utf8');
-}
-
-const isMainModule = import.meta.url === `file://${process.argv[1]}`;
-
-if (isMainModule) {
-	main();
-}
+fs.writeFileSync(path.join(root, 'public', 'llms.txt'), content, 'utf8');
+console.log('llms.txt written');

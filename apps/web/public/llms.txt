@@ -1,2 +1,26 @@
-## Pages
-- [Careers & Paid Certifications | Stellar AI Startup](/careers): Join Stellar AI startup roles, paid internships, and project-based certification cohorts with live client stipends.
+# Stellar Agents
+
+> Stellar Agents builds custom, human-in-the-loop AI agents and copilots for businesses. Agents take on repetitive, rule-based work inside the tools a team already uses, and a person approves anything important. Based in Chennai, India; works with teams in India and abroad.
+
+## Key facts
+- Brand: Stellar Agents (website: https://stellaragents.in/)
+- Legal entity: STELLARONE HEALTH TECHNOLOGIES PRIVATE LIMITED
+- Registered office: WeWork Olympia Cyberspace, No 21/22, Arulayiammanpet 2nd St, Alandur Rd, Guindy, Chennai, Tamil Nadu 600032, India
+- Contact: support@stellaragents.in
+- What we build: task agents for operations, assistants grounded in a client's own documents (RAG), multi-agent workflows, healthcare revenue cycle (RCM) support agents, code review and security agents, and private deployments of open-source models.
+- How we work: free discovery call, scoping of one workflow, small pilot, review with the client's team, go live with logging and human approval steps, handover.
+- Figures on the site (ROI calculator, industry impact numbers, demo outputs) are illustrative, not client results.
+
+## Main pages
+- [Stellar Agents | Custom AI Agents for Business](https://stellaragents.in/): Homepage. What Stellar Agents builds (custom, human-in-the-loop AI agents and copilots), how an engagement works, industries, demos and the contact form.
+- [What Is Agentic AI? | Stellar Agents Guide](https://stellaragents.in/agentic-ai): Plain-language guide: what agentic AI is, how an AI agent differs from a chatbot, where human review fits, the main risks and how a pilot is scoped.
+- [AI Agent Development Company in India | Stellar Agents](https://stellaragents.in/ai-agent-development-company-india): Services page: what Stellar Agents designs and builds, how a project runs from scoping to handover, and what clients should prepare.
+- [Agentic AI Solutions in Chennai | Stellar Agents](https://stellaragents.in/agentic-ai-chennai): Location page for the Chennai office (WeWork Olympia Cyberspace, Guindy): in-person scoping, typical first projects and how to get in touch.
+- [Healthcare RCM AI Agents | Stellar Agents, Chennai](https://stellaragents.in/ai-agents-healthcare-rcm): Industry page: where AI agents can help healthcare revenue cycle (RCM) teams, the human review built into each step, and how data is handled.
+
+## Careers
+- [Careers & AI Agent Certifications | Stellar Agents](https://stellaragents.in/careers): Open roles, paid internships and paid project-based certification cohorts in agentic AI.
+
+## Optional
+- [Privacy Policy (Draft) | Stellar Agents](https://stellaragents.in/privacy): Draft privacy policy, pending legal review. Not yet in effect.
+- [Terms of Use (Draft) | Stellar Agents](https://stellaragents.in/terms): Draft terms of use for the website, pending legal review. Not yet in effect.

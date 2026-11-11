@@ -1,10 +1,13 @@
 import { useLocation } from 'react-router-dom';
-import { useLayoutEffect } from 'react';
+import { useEffect, useLayoutEffect } from 'react';
+
+// useLayoutEffect warns during prerendering, where there is no layout to measure.
+const useIsoLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
 const ScrollToTop = () => {
     const { pathname, hash } = useLocation();
 
-    useLayoutEffect(() => {
+    useIsoLayoutEffect(() => {
         if (hash) {
             const target = document.getElementById(hash.slice(1));
 

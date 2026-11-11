@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Helmet } from 'react-helmet';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Briefcase, GraduationCap, Award, ShieldCheck, Sparkles,
@@ -11,7 +10,8 @@ import { toast } from 'sonner';
 import Seo from '@/components/Seo';
 import Scene from '@/components/Scene';
 import { HowItWorks, CtaBand } from '@/components/V2Blocks';
-import { ContactCard, FooterCompany } from '@/components/CompanyContact';
+import { SiteFooter, SolutionsMenu, Wordmark } from '@/components/SiteChrome';
+import { NAV_SOLUTIONS } from '@/seo/site';
 import CurrencySelector from '@/components/CurrencySelector';
 import { useCurrency } from '@/contexts/CurrencyContext';
 
@@ -83,7 +83,7 @@ const INTERNSHIPS_RAW = [
         duration: '3 - 6 Months',
         stipendUSD: 3200,
         desc: 'Work on ABHA health ID integrations, EHR data normalization, and clinical triage agent benchmarks.',
-        perks: ['Hands-on HIPAA & ABDM compliance training', 'Co-authorship on Stellar AI research briefs']
+        perks: ['Hands-on HIPAA & ABDM compliance training', 'Co-authorship on Stellar Agents research briefs']
     },
     {
         id: 'devrel-intern',
@@ -187,36 +187,12 @@ const CareersPage = () => {
 
     return (
         <div className="min-h-screen bg-black text-[#e5e5e5] font-sans">
-            <Helmet>
-                <title>Careers & Paid Certifications | Stellar AI Startup</title>
-                <meta
-                    name="description"
-                    content="Join Stellar AI startup roles, paid internships, and project-based certification cohorts with live client stipends."
-                />
-            </Helmet>
-
-            <Seo
-                title="Careers & Paid Certifications — Stellar AI"
-                description="Explore startup roles, paid developer internships, and paid project certification cohorts in agentic AI."
-                siteName="Stellar AI Careers"
-            />
+            <Seo path="/careers" />
 
             {/* Glowing Navbar */}
             <header className="fixed inset-x-0 top-0 z-50 bg-gradient-to-b from-black/80 via-black/40 to-transparent">
                 <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-6 lg:px-8">
-                    <a href="/" className="flex items-center gap-3 group">
-                        <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-teal-400 p-[1px]">
-                            <div className="flex h-full w-full items-center justify-center rounded-[11px] bg-[#050505]">
-                                <Sparkles className="h-5 w-5 text-neutral-300" />
-                            </div>
-                        </div>
-                        <div>
-                            <span className="font-display text-lg font-bold tracking-tight text-[#e5e5e5] flex items-center gap-1.5">
-                                Stellar<span className="glow-gradient-text">AI</span>
-                            </span>
-                            <span className="block text-[10px] font-mono tracking-widest text-neutral-300 uppercase">CAREERS & ACADEMY</span>
-                        </div>
-                    </a>
+                    <Wordmark sub="CAREERS & ACADEMY" />
 
                     <nav className="ml-10 mr-6 hidden items-center gap-6 xl:flex">
                         <a href="/" className="nav-link">Home Platform</a>
@@ -224,6 +200,7 @@ const CareersPage = () => {
                         <a href="#internships" className="nav-link">Paid Internships</a>
                         <a href="#certifications" className="nav-link">Paid Certifications</a>
                         <a href="#credentials" className="nav-link">Industry Standards</a>
+                        <SolutionsMenu />
                     </nav>
 
                     <div className="flex items-center gap-2 sm:gap-4">
@@ -253,14 +230,16 @@ const CareersPage = () => {
                             <li><a href="#internships" className="nav-link">Paid Internships</a></li>
                             <li><a href="#certifications" className="nav-link">Paid Certifications</a></li>
                             <li><a href="#credentials" className="nav-link">Industry Standards</a></li>
+                            {NAV_SOLUTIONS.map((l) => <li key={l.href}><a href={l.href} className="nav-link">{l.label}</a></li>)}
                             <li><a href="#positions" className="nav-link">View Open Roles</a></li>
                         </ul>
                     </nav>
                 )}
             </header>
 
+            <main>
             {/* Hero Scene */}
-            <Scene id="careers-top" slot="careers" as="h1" eager label="Careers at Stellar AI" title="Build the Future of AI Agents" sub="Whether you are an experienced systems architect looking for full-time startup equity, a developer seeking a paid internship, or an engineer enrolling in our project-based certification cohorts, Stellar AI is your launching pad." cta="Explore 4 Open Roles" href="#positions" secondary={{ label: "Paid Certification Cohorts", href: "#certifications" }} />
+            <Scene id="careers-top" slot="careers" as="h1" eager label="Careers at Stellar Agents" title="Build the future of AI agents with Stellar Agents" sub="Whether you are an experienced systems architect looking for full-time startup equity, a developer seeking a paid internship, or an engineer enrolling in our project-based certification cohorts, Stellar Agents is your launching pad." cta="Explore 4 Open Roles" href="#positions" secondary={{ label: "Paid Certification Cohorts", href: "#certifications" }} />
 
             <section id="positions" className="py-20 max-w-7xl mx-auto px-6 lg:px-8">
                 <div className="flex flex-wrap items-center justify-between gap-6 mb-12">
@@ -564,23 +543,9 @@ const CareersPage = () => {
             </AnimatePresence>
 
             <CtaBand primaryHref="#positions" primaryLabel="See open roles" title="Build AI agents with us" sub="Roles, paid internships and certification cohorts. Questions? Write to us." />
+            </main>
 
-            {/* Footer */}
-            <footer className="border-t border-white/10 bg-[#050505] py-12">
-                <div className="max-w-7xl mx-auto px-6 lg:px-8 flex flex-wrap items-center justify-between gap-6">
-                    <div className="flex items-center gap-3">
-                        <Sparkles className="h-5 w-5 text-neutral-300" />
-                        <span className="font-display font-bold text-[#e5e5e5]">Stellar AI Academy & Careers</span>
-                    </div>
-
-                    <div className="flex items-center gap-6 text-xs text-[#a3a3a3]">
-                        <a href="/" className="hover:text-white transition">Main Platform</a>
-                        <a href="#positions" className="hover:text-white transition">Careers</a>
-                        <a href="#certifications" className="hover:text-white transition">Paid Certifications</a>
-                    </div>
-                </div>
-                <FooterCompany />
-            </footer>
+            <SiteFooter label="Stellar Agents Academy & Careers" />
         </div>
     );
 };

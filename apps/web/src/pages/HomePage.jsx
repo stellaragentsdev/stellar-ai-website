@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Helmet } from 'react-helmet';
 import { motion } from 'framer-motion';
 import {
     Orbit, Rocket, Cpu, CircuitBoard, Workflow, BookOpen,
@@ -15,7 +14,9 @@ import CountUp from '@/components/CountUp';
 import Seo from '@/components/Seo';
 import Scene from '@/components/Scene';
 import { HowItWorks, CtaBand } from '@/components/V2Blocks';
-import { ContactCard, FooterCompany } from '@/components/CompanyContact';
+import { ContactCard } from '@/components/CompanyContact';
+import { SiteFooter, SolutionsMenu } from '@/components/SiteChrome';
+import { NAV_SOLUTIONS } from '@/seo/site';
 import ContactForm from '@/components/ContactForm';
 import CurrencySelector from '@/components/CurrencySelector';
 import { useCurrency } from '@/contexts/CurrencyContext';
@@ -32,8 +33,6 @@ import langchainLogo from '../assets/brands/langchain.svg';
 import crewaiLogo from '../assets/brands/crewai.svg';
 import midjourneyLogo from '../assets/brands/midjourney.svg';
 import runwayLogo from '../assets/brands/runway.svg';
-
-const HERO_IMG = 'https://images.hostinger.com/33c9faca-ec5f-454f-bca0-1fedf56573f6.png';
 
 const INDUSTRY_SHOWCASES = {
     healthcare: {
@@ -411,20 +410,7 @@ const HomePage = () => {
 
     return (
         <div className="min-h-screen bg-black text-[#e5e5e5] font-sans">
-            <Helmet>
-                <title>Stellar AI | AI Agents & Copilots for Business</title>
-                <meta
-                    name="description"
-                    content="LLM-powered AI agents and copilots for healthcare, finance, retail, legal, logistics and education. RAG over your data, human-in-the-loop, live in days."
-                />
-            </Helmet>
-
-            <Seo
-                title="Stellar AI — AI Agents & Copilots for Business"
-                description="LLM-powered AI agents and copilots with guardrails and human review."
-                image={HERO_IMG}
-                siteName="Stellar AI"
-            />
+            <Seo path="/" />
 
             {/* Glowing Reordered Navbar */}
             <header className="fixed inset-x-0 top-0 z-50 bg-gradient-to-b from-black/80 via-black/40 to-transparent">
@@ -437,6 +423,7 @@ const HomePage = () => {
                         <a href="#industries" className="nav-link">Industries</a>
                         <a href="#calculator" className="nav-link">ROI calculator</a>
                         <a href="#certifications" className="nav-link">Certifications</a>
+                        <SolutionsMenu />
                         <a href="/careers" className="nav-link flex items-center gap-1">
                             <Briefcase className="h-3.5 w-3.5" /> Careers & Internships
                         </a>
@@ -468,6 +455,7 @@ const HomePage = () => {
                             <li><a href="#industries" className="nav-link">Industries</a></li>
                             <li><a href="#calculator" className="nav-link">ROI calculator</a></li>
                             <li><a href="#certifications" className="nav-link">Certifications</a></li>
+                            {NAV_SOLUTIONS.map((l) => <li key={l.href}><a href={l.href} className="nav-link">{l.label}</a></li>)}
                             <li><a href="/careers" className="nav-link">Careers & Internships</a></li>
                             <li><a href="#contact" className="nav-link">Book a free call</a></li>
                         </ul>
@@ -475,8 +463,9 @@ const HomePage = () => {
                 )}
             </header>
 
+            <main>
             {/* Hero Section */}
-            <Scene id="top" slot="hero" as="h1" eager title="AI agents that do the busywork. You keep control." sub="Human-in-the-loop agents and copilots. Live in days, not months." cta="Try 6 live agent demos" href="#demo" />
+            <Scene id="top" slot="hero" as="h1" eager title="AI agents that do the busywork. You keep control." sub="Stellar Agents builds human-in-the-loop AI agents and copilots for your business. Live in days, not months." cta="Try 6 live agent demos" href="#demo" />
 
             <section id="sandbox" className="relative overflow-hidden py-20 lg:py-28 bg-black">
                 <div className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 h-[500px] w-[800px] rounded-full bg-teal-500/10 opacity-60 hidden" />
@@ -921,7 +910,7 @@ const HomePage = () => {
                             <div className="mt-6 grid grid-cols-2 gap-4 border-t border-white/10 pt-6 text-left">
                                 <div>
                                     <p className="text-[10px] font-mono text-[#a3a3a3] uppercase">YEARLY HOURS RECLAIMED</p>
-                                    <p className="text-xl font-bold text-[#e5e5e5] font-mono">{hoursSavedYearly.toLocaleString()} hrs</p>
+                                    <p className="text-xl font-bold text-[#e5e5e5] font-mono">{hoursSavedYearly.toLocaleString('en-US')} hrs</p>
                                 </div>
                                 <div>
                                     <p className="text-[10px] font-mono text-[#a3a3a3] uppercase">TARGET STP ACCURACY</p>
@@ -977,23 +966,9 @@ const HomePage = () => {
             </section>
 
             <CtaBand />
+            </main>
 
-            {/* Footer */}
-            <footer className="border-t border-white/10 bg-[#050505] py-12">
-                <div className="max-w-7xl mx-auto px-6 lg:px-8 flex flex-wrap items-center justify-between gap-6">
-                    <div className="flex items-center gap-3">
-                        <Sparkles className="h-5 w-5 text-neutral-300" />
-                        <span className="font-display font-bold text-[#e5e5e5]">Stellar AI Agents</span>
-                                            </div>
-
-                    <div className="flex items-center gap-6 text-xs text-[#a3a3a3]">
-                        <a href="/careers" className="hover:text-white transition">Careers & Internships</a>
-                        <a href="/careers#certifications" className="hover:text-white transition">Certifications</a>
-                        <a href="#top" className="hover:text-white transition">Data Security</a>
-                    </div>
-                </div>
-                <FooterCompany />
-            </footer>
+            <SiteFooter />
         </div>
     );
 };

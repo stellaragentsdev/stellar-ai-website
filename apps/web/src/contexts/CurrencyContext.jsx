@@ -11,14 +11,21 @@ export const CURRENCIES = {
 const CurrencyContext = createContext();
 
 export const CurrencyProvider = ({ children }) => {
-    const [currency, setCurrencyState] = useState(() => {
-        return localStorage.getItem('stellar_currency') || 'USD';
-    });
+    // Start in USD so the prerendered HTML and the first client render match,
+    // then apply the visitor's saved choice after mount.
+    const [currency, setCurrencyState] = useState('USD');
+
+    useEffect(() => {
+        try {
+            const saved = window.localStorage.getItem('stellar_currency');
+            if (saved && CURRENCIES[saved]) setCurrencyState(saved);
+        } catch { /* storage unavailable */ }
+    }, []);
 
     const setCurrency = (code) => {
         if (CURRENCIES[code]) {
             setCurrencyState(code);
-            localStorage.setItem('stellar_currency', code);
+            try { window.localStorage.setItem('stellar_currency', code); } catch { /* storage unavailable */ }
         }
     };
 
@@ -40,7 +47,7 @@ export const CurrencyProvider = ({ children }) => {
             return `${curr.symbol}${(converted / 1000).toFixed(0)}k`;
         }
 
-        return `${curr.symbol}${converted.toLocaleString()}`;
+        return `${curr.symbol}${converted.toLocaleString(currency === 'INR' ? 'en-IN' : 'en-US')}`;
     };
 
     return (

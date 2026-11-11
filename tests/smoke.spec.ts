@@ -5,7 +5,7 @@ test('keyboard navigation and contact form submit', async ({ page }) => {
   await page.goto('http://localhost:3000/');
 
   // Basic page sanity
-  await expect(page).toHaveTitle(/Stellar AI Agents/i);
+  await expect(page).toHaveTitle(/Stellar Agents/i);
 
   // Tabbing through the page a few times to exercise keyboard navigation
   for (let i = 0; i < 12; i++) {

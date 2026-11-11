@@ -1,8 +1,45 @@
+# Apache / LiteSpeed rules for stellaragents.in (Hostinger).
+# Pages are prerendered at build time into <route>.html files.
+# Keep the route list in sync with PAGES in src/seo/site.js.
+
+DirectoryIndex index.html
+ErrorDocument 404 /404.html
+
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
-  RewriteRule ^index\.html$ - [L]
-  RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule . /index.html [L]
+
+  # 1. One host: 301 www.stellaragents.in -> https://stellaragents.in
+  RewriteCond %{HTTP_HOST} ^www\.stellaragents\.in$ [NC]
+  RewriteRule ^(.*)$ https://stellaragents.in/$1 [R=301,L]
+
+  # 2. 301 /index.html -> / (only when the visitor asked for it, not on internal rewrites)
+  RewriteCond %{THE_REQUEST} \s/+index\.html[\s?] [NC]
+  RewriteRule ^index\.html$ https://stellaragents.in/ [R=301,L]
+
+  # 3. 301 duplicate forms of known pages to the clean URL:
+  #    /careers/ and /careers.html -> /careers
+  RewriteRule ^(careers|agentic-ai|ai-agent-development-company-india|agentic-ai-chennai|ai-agents-healthcare-rcm|privacy|terms)/$ https://stellaragents.in/$1 [R=301,L]
+  RewriteCond %{THE_REQUEST} \s/+(careers|agentic-ai|ai-agent-development-company-india|agentic-ai-chennai|ai-agents-healthcare-rcm|privacy|terms)\.html[\s?] [NC]
+  RewriteRule ^ https://stellaragents.in/%1 [R=301,L]
+
+  # 4. Serve the prerendered file for each known page.
+  RewriteRule ^(careers|agentic-ai|ai-agent-development-company-india|agentic-ai-chennai|ai-agents-healthcare-rcm|privacy|terms)$ /$1.html [L]
+
+  # Anything else that is not a real file falls through to ErrorDocument 404.
+</IfModule>
+
+<IfModule mod_mime.c>
+  AddType application/manifest+json .webmanifest
+  AddType text/plain .txt
+  AddType application/xml .xml
+</IfModule>
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(html)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+  <FilesMatch "^404\.html$">
+    Header set X-Robots-Tag "noindex"
+  </FilesMatch>
 </IfModule>

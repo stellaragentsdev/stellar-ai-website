@@ -1,0 +1,12 @@
+# robots.txt for https://stellaragents.in
+# All crawlers, including AI search and assistant crawlers (GPTBot, ClaudeBot,
+# PerplexityBot, Google-Extended and others), may read the public pages.
+# To opt out of a specific AI crawler, add a block such as:
+#   User-agent: GPTBot
+#   Disallow: /
+
+User-agent: *
+Allow: /
+Disallow: /contact-handler.php
+
+Sitemap: https://stellaragents.in/sitemap.xml

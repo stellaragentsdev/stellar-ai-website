@@ -5,7 +5,7 @@ function sendContactEmail(array $data): array {
     $to = getenv('STELLAR_CONTACT_TO') ?: 'sarath@stellaragents.in';
     $from = getenv('STELLAR_CONTACT_FROM') ?: 'no-reply@stellaragents.in';
     $replyTo = trim((string)($data['email'] ?? '')) ?: $from;
-    $subject = 'New contact enquiry from Stellar AI Agents';
+    $subject = 'New contact enquiry from Stellar Agents';
 
     $lines = [];
     $lines[] = 'Name: ' . ($data['name'] ?? '');
@@ -31,7 +31,7 @@ function sendContactEmail(array $data): array {
             $mail->SMTPAuth = true;
             $mail->Username = getenv('SMTP_USERNAME') ?: '';
             $mail->Password = getenv('SMTP_PASSWORD') ?: '';
-            $mail->setFrom($from, 'Stellar AI Agents');
+            $mail->setFrom($from, 'Stellar Agents');
             $mail->addAddress($to);
             $mail->addReplyTo($replyTo, $data['name'] ?? '');
             $mail->Subject = $subject;
